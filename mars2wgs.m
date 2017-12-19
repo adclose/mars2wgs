@@ -13,8 +13,8 @@ for i=1:30
     [tempLat,tempLong] = wgs2gcj(lat, long);
     deltaLat = lat - tempLat;
     deltaLong = long - tempLong;
-    lat = marsLat + deltaLat
-    long = marsLong + deltaLong
+    lat = marsLat + deltaLat;
+    long = marsLong + deltaLong;
     if all(abs(tempLat-marsLat)<threshold & abs(tempLong-marsLong)<threshold)
         return;
     end

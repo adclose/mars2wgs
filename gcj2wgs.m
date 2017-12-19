@@ -1,33 +1,17 @@
 function [lat, long ] = gcj2wgs(gcjLat, gcjLng)
-% adapted from https://github.com/googollee/eviltransform
+% Not exact
+% Fully vectorized
 
-    initDelta = 0.01;
-    threshold = 0.000001;
-    dLat = initDelta;
-    dLng = initDelta;
-    mLat = gcjLat - dLat;
-    mLng = gcjLng - dLng;
-    pLat = gcjLat + dLat;
-    pLng = gcjLng + dLng;
+    lat = gcjLat;
+    long = gcjLng;
 
-    for i=1:30
-        wgsLat = (mLat + pLat) / 2;
-        wgsLng = (mLng + pLng) / 2;
-        [tmplat, tmplng] = wgs2gcj(wgsLat, wgsLng);
-        dLat = tmplat - gcjLat;
-        dLng = tmplng - gcjLng;
-        if all(abs(dLat) < threshold & abs(dLng) < threshold)
-            lat = wgsLat;
-            long =wgsLng;
-            return;
-        end
-        pLat(dLat>0) = wgsLat(dLat>0);
-        mLat(~dLat>0) = wgsLat(~dLat>0);
-        pLng(dLng>0) = wgsLng(dLng>0);
-        mLng(~dLng>0) = wgsLng(~dLng>0);
-    end
+    inChina = ~outOfChina(gcjLat, gcjLng);
     
-   lat = wgsLat;
-   long =wgsLng;
-    
+    [dlat, dlng] = delta(gcjLat(inChina), gcjLng(inChina));
+
+    lat(inChina) = gcjLat(inChina) - dlat;
+    long(inChina) = gcjLng(inChina) - dlng;
+
 end
+
+
